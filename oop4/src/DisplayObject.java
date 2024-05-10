@@ -83,6 +83,27 @@ public abstract class DisplayObject {
         this.dY=y1+v*Math.sin(ang*Math.PI/180)*(t-createTime)/CONSTT;
 
     }
+
+    public double mirVert(double ang) {
+        if (ang <= 180)
+            return 180 - ang;
+        else {
+            var tempAng = ang - 180;
+            return (180 - tempAng) + 180;
+
+        }
+    }
+
+    public void changeVector(long t, String type){
+
+        this.x0 = this.x;
+        this.y0 = this.y;
+//        this.ang=Math.abs(this.ang-180);
+        this.createTime=t;
+//        this.v*=-1;
+
+
+    }
     public void moveAcc(double v, double a,  int x1,int y1,double ang,long t){
 
         this.dX= x1+v*Math.cos(ang*Math.PI/180)*(t-createTime)/ CONSTT+a*Math.cos(ang*Math.PI/180)*pow((double) (t - createTime) / CONSTT,2)/2;
