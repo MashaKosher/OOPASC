@@ -117,8 +117,16 @@ public class Test extends JFrame implements Runnable {
 
         for (Circle obj : copy) {
 
-            if(obj.x1Frame<=minX|| obj.x2Frame>=maxX||obj.y1Frame<=minY||obj.y2Frame>=maxY)
-                obj.changeVector(t, "minus");
+            if(obj.x1Frame<=minX)
+                obj.changeVector(t, 1);
+            else if(obj.x2Frame>=maxX)
+                obj.changeVector(t, 2);
+            else if(obj.y1Frame<=minY){
+                obj.changeVector(t, 3);
+            }
+            else if(obj.y2Frame>=maxY){
+                obj.changeVector(t, 4);
+            }
             /*
             if(obj.x2Frame >= maxX){
                 obj.ang = 180 - obj.ang;
