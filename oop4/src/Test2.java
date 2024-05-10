@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -9,7 +10,7 @@ import java.util.Random;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class Test extends JFrame implements Runnable {
+public class Test2 extends JFrame implements Runnable {
     public int FPS = 60;
     public GameField gameField;
     private JPanel panel;
@@ -26,14 +27,14 @@ public class Test extends JFrame implements Runnable {
 
     public static void main(String[] args) {
 
-        new Test(1440, 818, "Game", 350, 350, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 1);
+        new Test2(1440, 818, "Game", 350, 350, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 1);
 
         // new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,sizeNoInsetsFull().width-50,sizeNoInsetsFull().height-50,0,255,255,175,214,255,20);
         //   new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,800,700,0,255,255,175,214,255,20);
         // new Game(1440, 789,"Game",0,0,1440,789,0,255,255,175,214,255,20);
     }
 
-    public Test(int w, int h, String title, int x1, int y1, int x2, int y2, int r, int g, int b, int window, int r1, int g1, int b1, int r2, int g2, int b2, int frameSize, int type) {
+    public Test2(int w, int h, String title, int x1, int y1, int x2, int y2, int r, int g, int b, int window, int r1, int g1, int b1, int r2, int g2, int b2, int frameSize, int type) {
         setUndecorated(true);
 
         setTitle(title);
@@ -116,21 +117,15 @@ public class Test extends JFrame implements Runnable {
         ArrayList<Circle> copy = new ArrayList<>(gameField.objects);
 
         for (Circle obj : copy) {
-
-            if(obj.x1Frame<=minX|| obj.x2Frame>=maxX||obj.y1Frame<=minY||obj.y2Frame>=maxY)
-                obj.changeVector(t, "minus");
-            /*
             if(obj.x2Frame >= maxX){
                 obj.ang = 180 - obj.ang;
                 obj.changeVector(t, "minus");
-            } else if ( obj.y1Frame <= minY || ) {
+            } else if ( obj.y1Frame <= minY) {
                 obj.ang = 270 - obj.ang;
                 obj.changeVector(t, "minus");
 
 
             }
-
-             */
 
 //                if(obj.x2Frame >= maxX || obj.y1Frame <= minY){
 //                    System.out.println(obj.ang);
@@ -143,8 +138,8 @@ public class Test extends JFrame implements Runnable {
 //                    obj.changeVector(t, "plus");
 //
 //                }
-            }
         }
+    }
 
 
     public Circle createFigure() {
@@ -166,11 +161,11 @@ public class Test extends JFrame implements Runnable {
     }
 
     public void createList(int type) {
-        for(int i=0; i<10; i++){
+       // for(int i=0; i<10; i++){
             Circle cir = createFigure();
 
             gameField.addToMove(cir, type);
-        }
+       // }
 
 
     }
@@ -196,44 +191,3 @@ public class Test extends JFrame implements Runnable {
 
 }
 
-class changeTheme extends DefaultMetalTheme {
-    public Color c;
-
-    public changeTheme(Color c) {
-        super();
-        this.c = c;
-    }
-
-    public ColorUIResource getWindowTitleInactiveBackground() {
-        return new ColorUIResource(c);
-    }
-
-    public ColorUIResource getWindowTitleBackground() {
-        return new ColorUIResource(c);
-    }
-
-    public ColorUIResource getPrimaryControlHighlight() {
-        return new ColorUIResource(c);
-    }
-
-    public ColorUIResource getPrimaryControlDarkShadow() {
-        return new ColorUIResource(c);
-    }
-
-    public ColorUIResource getPrimaryControl() {
-        return new ColorUIResource(c);
-    }
-
-    public ColorUIResource getControlHighlight() {
-        return new ColorUIResource(c);
-    }
-
-    public ColorUIResource getControlDarkShadow() {
-        return new ColorUIResource(c);
-    }
-
-    public ColorUIResource getControl() {
-        return new ColorUIResource(c);
-    }
-
-}
