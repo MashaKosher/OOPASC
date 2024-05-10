@@ -53,8 +53,8 @@ public class GameField extends Rectangle {
         obj.x0=obj.x;
         obj.y0=obj.y;
 
-        //obj.ang=rand.nextDouble(0,361);
         obj.ang=rand.nextDouble(0,361);
+       // obj.ang=45;
         obj.v=rand.nextDouble(40, 60);
         if (type==2){
             obj.a=rand.nextDouble(30, 70);

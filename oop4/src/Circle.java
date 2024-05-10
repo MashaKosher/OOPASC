@@ -28,6 +28,37 @@ public class Circle extends DisplayObject {
         g.fillOval(x1Inner, y1Inner, 2*(radius-lineSize), 2*(radius-lineSize));
 
     }
+    public void changeVector(long t, int type){
+        if(type==1) {
+            this.upd(this.x + 2,this.y);
+            this.x0 = this.x + 2;
+            this.y0 = this.y;
+        }
+        else if(type==2) {
+            this.upd(this.x - 2,this.y);
+            this.x0 = this.x -2;
+            this.y0 = this.y;
+        }
+        else if(type==3) {
+            this.upd(this.x ,this.y+ 2);
+            this.x0 = this.x ;
+            this.y0 = this.y+2;
+        }
+        else if(type==4) {
+            this.upd(this.x ,this.y- 2);
+            this.x0 = this.x ;
+            this.y0 = this.y-2;
+        }
+
+        if(type==1||type==2)
+            this.ang=this.mirVert(this.ang);
+        else
+            this.ang=this.mirHoriz(this.ang);
+        this.createTime=t;
+//        this.v*=-1;
+
+
+    }
     @Override
     public void upd(int x,int y) {
         int deltaX=x-this.x;

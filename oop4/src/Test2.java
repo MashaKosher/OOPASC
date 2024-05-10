@@ -117,14 +117,15 @@ public class Test2 extends JFrame implements Runnable {
         ArrayList<Circle> copy = new ArrayList<>(gameField.objects);
 
         for (Circle obj : copy) {
-            if(obj.x2Frame >= maxX){
-                obj.ang = 180 - obj.ang;
-                obj.changeVector(t, "minus");
-            } else if ( obj.y1Frame <= minY) {
-                obj.ang = 270 - obj.ang;
-                obj.changeVector(t, "minus");
-
-
+            if(obj.x1Frame<=minX)
+                obj.changeVector(t, 1);
+            else if(obj.x2Frame>=maxX)
+                obj.changeVector(t, 2);
+            else if(obj.y1Frame<=minY){
+                obj.changeVector(t, 3);
+            }
+            else if(obj.y2Frame>=maxY){
+                obj.changeVector(t, 4);
             }
 
 //                if(obj.x2Frame >= maxX || obj.y1Frame <= minY){
@@ -153,8 +154,8 @@ public class Test2 extends JFrame implements Runnable {
 
 
         int radius = 35;
-        int x1 = rand.nextInt(4 + minX, maxX - 2 * radius - 3);
-        int y1 = rand.nextInt(4 + minY, maxY - 2 * radius - 3);
+        int x1 = 70;
+        int y1 = 200;
         Circle cir = new Circle(x1, y1, radius, rDraw, gDraw, bDraw, rFill, gFill, bFill, lineSize);
         return cir;
 
