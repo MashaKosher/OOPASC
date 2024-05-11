@@ -21,12 +21,12 @@ public class Test extends JFrame implements Runnable {
     int height;
     int type;
     long CONSTT = 1000000000;
-
+int num=10;
 
 
     public static void main(String[] args) {
 
-        new Test(1440, 818, "Game", 950, 450, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 1);
+        new Test(1440, 818, "Game", 30, 30, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
 
         // new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,sizeNoInsetsFull().width-50,sizeNoInsetsFull().height-50,0,255,255,175,214,255,20);
         //   new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,800,700,0,255,255,175,214,255,20);
@@ -117,16 +117,7 @@ public class Test extends JFrame implements Runnable {
         ArrayList<Circle> copy = new ArrayList<>(gameField.objects);
 
         for (Circle obj : copy) {
-            if(obj.r){
-                obj.ang=obj.newang;
-                //obj.v=obj.newv;
-                obj.r=false;
-            }
-//            System.out.println("Objects coords: " + obj.x + " " + obj.y);
-//            for(int i = 0; i<2; i++){
-//                System.out.println("From array :" + gameField.positions[i][0] + " - "+gameField.positions[i][1] );
-//
-//            }
+
             if(obj.x1Frame<=minX)
                 obj.changeVector(t, 1);
             else if(obj.x2Frame>=maxX)
@@ -140,8 +131,10 @@ public class Test extends JFrame implements Runnable {
 
         }
 //        System.out.println("-------------");
-        crashFind();
-        allRotate();
+
+            crashFind();
+            allRotate(t);
+
     }
 
 
@@ -167,8 +160,8 @@ public class Test extends JFrame implements Runnable {
     }
 
     public void createList(int type) {
-        gameField.positions=new int[2][2];
-        for(int i=0; i<2; i++){
+        gameField.positions=new int[10][10];
+        for(int i=0; i<num; i++){
             Circle cir = createFigure();
 
             gameField.addToMove(cir, type);
@@ -176,17 +169,30 @@ public class Test extends JFrame implements Runnable {
             gameField.positions[i][1] = cir.y;
 //            System.out.println(gameField.positions[i][0] + "---" + gameField.positions[i][0]);
         }
-        gameField.crashState=new boolean[2][2];
+        gameField.crashState=new boolean[num][num];
     }
     
-    public void allRotate(){
-        for(int i=0;i<1;i++){
-            for(int j=0;j<2;j++){
+    public void allRotate(long t){
+        for(int i=0;i<num-1;i++){
+            for(int j=0;j<num;j++){
                 if(gameField.crashState[i][j]) {
+                    for(int k=0;k<num-1;k++){
+//                        for(int j=0;j<num;j++) {
+                            System.out.println(gameField.crashState[i][0]+ "----" + gameField.crashState[i][1]);
+                        }
                     Circle c1 =gameField.objects.get(i);
                     Circle c2 =gameField.objects.get(j);
-                    c1.rotation(c2);
-                    c2.rotation(c1);
+
+                    c1.rotation(c2,t);
+                    c2.rotation(c1,t);
+                    c1.ang=c1.newang;
+                    c1.v=c1.newv;
+//                    c1.x = c1.bufx;
+//                    c1.y = c1.bufy;
+                    c2.ang=c2.newang;
+                    c2.v=c2.newv;
+//                    c2.x = c2.bufx;
+//                    c2.y = c2.bufy;
                     //c1.ang=c1.newang;
                     //c2.ang=c2.newang;
                     //c1.v=c1.newv;
@@ -194,8 +200,8 @@ public class Test extends JFrame implements Runnable {
                 }
             }
         }
-        for(int i=0;i<1;i++){
-            for(int j=0;j<2;j++) {
+        for(int i=0;i<num-1;i++){
+            for(int j=0;j<num;j++) {
                 gameField.crashState[i][j]=false;
             }
             }
@@ -204,19 +210,22 @@ public class Test extends JFrame implements Runnable {
 
     public void crashFind(){
         boolean flag  = false;
-        for (int i = 0; i < 1; i++){
-            for ( int j = (i+1); j< 2; j++ ){
-                double temp = Math.pow(gameField.positions[i][0] - gameField.positions[j][0], 2 );
-                double temp1 = Math.pow(gameField.positions[i][1] - gameField.positions[j][1], 2  );
-                double temp3 = Math.pow(temp+temp1, 0.5);
-                int radius = gameField.objects.get(i).radius*2;
-                if (temp3 <= radius){
-                    if(!gameField.crashState[j][i]){
-                        gameField.crashState[i][j] = true;
-                        flag = true;
-                    }
+        for (int i = 0; i < num-1; i++){
+            for ( int j = (i+1); j< num; j++ ){
+                if(gameField.objects.get(i).rr==0) {
+                    double temp = Math.pow(gameField.positions[i][0] - gameField.positions[j][0], 2);
+                    double temp1 = Math.pow(gameField.positions[i][1] - gameField.positions[j][1], 2);
+                    double temp3 = Math.pow(temp + temp1, 0.5);
+                    int radius = gameField.objects.get(i).radius * 2;
+                    if (temp3 <= radius+3) {
+                        if (!gameField.crashState[j][i]) {
+                            gameField.crashState[i][j] = true;
+                            flag = true;
+                        }
 
+                    }
                 }
+                else gameField.objects.get(i).rr--;
             }
         }
 
@@ -239,8 +248,8 @@ public class Test extends JFrame implements Runnable {
         dim.width = 2 * dim.width - realW;
         dim.height = 2 * dim.height - realH;
         this.setPreferredSize(dim);
-        System.out.println(dim.width + " " + dim.height);
-        System.out.println(this.getContentPane().getSize().getHeight());
+//        System.out.println(dim.width + " " + dim.height);
+//        System.out.println(this.getContentPane().getSize().getHeight());
         this.pack();
         return dim;
     }
