@@ -4,10 +4,8 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
-
-
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class Test extends JFrame implements Runnable {
     public int FPS = 60;
@@ -24,9 +22,11 @@ public class Test extends JFrame implements Runnable {
     int type;
     long CONSTT = 1000000000;
 
+
+
     public static void main(String[] args) {
 
-        new Test(1440, 818, "Game", 350, 350, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 1);
+        new Test(1440, 818, "Game", 950, 450, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 1);
 
         // new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,sizeNoInsetsFull().width-50,sizeNoInsetsFull().height-50,0,255,255,175,214,255,20);
         //   new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,800,700,0,255,255,175,214,255,20);
@@ -112,11 +112,21 @@ public class Test extends JFrame implements Runnable {
     }
 
     public void update(long t) {
+
         gameField.moveAllFigures(type, t);
         ArrayList<Circle> copy = new ArrayList<>(gameField.objects);
 
         for (Circle obj : copy) {
-
+            if(obj.r){
+                obj.ang=obj.newang;
+                //obj.v=obj.newv;
+                obj.r=false;
+            }
+//            System.out.println("Objects coords: " + obj.x + " " + obj.y);
+//            for(int i = 0; i<2; i++){
+//                System.out.println("From array :" + gameField.positions[i][0] + " - "+gameField.positions[i][1] );
+//
+//            }
             if(obj.x1Frame<=minX)
                 obj.changeVector(t, 1);
             else if(obj.x2Frame>=maxX)
@@ -127,32 +137,12 @@ public class Test extends JFrame implements Runnable {
             else if(obj.y2Frame>=maxY){
                 obj.changeVector(t, 4);
             }
-            /*
-            if(obj.x2Frame >= maxX){
-                obj.ang = 180 - obj.ang;
-                obj.changeVector(t, "minus");
-            } else if ( obj.y1Frame <= minY || ) {
-                obj.ang = 270 - obj.ang;
-                obj.changeVector(t, "minus");
 
-
-            }
-
-             */
-
-//                if(obj.x2Frame >= maxX || obj.y1Frame <= minY){
-//                    System.out.println(obj.ang);
-//                    if(obj.ang>180)
-//                        obj.ang-=90;
-//                    else
-//                        obj.ang+=90;
-//                    obj.changeVector(t, "minus");
-//                } else {
-//                    obj.changeVector(t, "plus");
-//
-//                }
-            }
         }
+//        System.out.println("-------------");
+        crashFind();
+        allRotate();
+    }
 
 
     public Circle createFigure() {
@@ -167,20 +157,74 @@ public class Test extends JFrame implements Runnable {
 
         int radius = 35;
         int x1 = rand.nextInt(4 + minX, maxX - 2 * radius - 3);
-        int y1 = rand.nextInt(4 + minY, maxY - 2 * radius - 3);
+       int y1 = rand.nextInt(4 + minY, maxY - 2 * radius - 3);
+
         Circle cir = new Circle(x1, y1, radius, rDraw, gDraw, bDraw, rFill, gFill, bFill, lineSize);
+//        System.out.println("Circle size" + (cir.x1Frame - cir.x2Frame));
+
         return cir;
 
     }
 
     public void createList(int type) {
-        for(int i=0; i<10; i++){
+        gameField.positions=new int[2][2];
+        for(int i=0; i<2; i++){
             Circle cir = createFigure();
 
             gameField.addToMove(cir, type);
+            gameField.positions[i][0] = cir.x;
+            gameField.positions[i][1] = cir.y;
+//            System.out.println(gameField.positions[i][0] + "---" + gameField.positions[i][0]);
+        }
+        gameField.crashState=new boolean[2][2];
+    }
+    
+    public void allRotate(){
+        for(int i=0;i<1;i++){
+            for(int j=0;j<2;j++){
+                if(gameField.crashState[i][j]) {
+                    Circle c1 =gameField.objects.get(i);
+                    Circle c2 =gameField.objects.get(j);
+                    c1.rotation(c2);
+                    c2.rotation(c1);
+                    //c1.ang=c1.newang;
+                    //c2.ang=c2.newang;
+                    //c1.v=c1.newv;
+                   // c2.v=c2.newv;
+                }
+            }
+        }
+        for(int i=0;i<1;i++){
+            for(int j=0;j<2;j++) {
+                gameField.crashState[i][j]=false;
+            }
+            }
+    }
+
+
+    public void crashFind(){
+        boolean flag  = false;
+        for (int i = 0; i < 1; i++){
+            for ( int j = (i+1); j< 2; j++ ){
+                double temp = Math.pow(gameField.positions[i][0] - gameField.positions[j][0], 2 );
+                double temp1 = Math.pow(gameField.positions[i][1] - gameField.positions[j][1], 2  );
+                double temp3 = Math.pow(temp+temp1, 0.5);
+                int radius = gameField.objects.get(i).radius*2;
+                if (temp3 <= radius){
+                    if(!gameField.crashState[j][i]){
+                        gameField.crashState[i][j] = true;
+                        flag = true;
+                    }
+
+                }
+            }
         }
 
+//        System.out.println("--------"+ gameField.objects.size());
+        if(flag){
+            System.out.println(3);
 
+        }
     }
 
     public Dimension size(int w, int h) {
