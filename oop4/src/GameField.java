@@ -4,12 +4,10 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GameField extends Rectangle {
-    public int x1;
-    public int y1;
-    public int x2;
-    public int y2;
+    public int x1, y1;
+    public int x2, y2;
+
     public ArrayList<Circle> objects;
-//    HashMap<Integer, int[]> positions;
     int[][] positions;
     boolean[][]crashState;
     public GameField(int x1, int y1, int x2, int y2, int r1, int g1, int b1, int r2, int g2, int b2, int frameSize){
@@ -18,9 +16,7 @@ public class GameField extends Rectangle {
         this.y1=y1;
         this.x2=x2;
         this.y2=y2;
-        objects=new ArrayList<Circle>();
-//        System.out.println("Circle size" + x + y + );
-
+        objects=new ArrayList< >();
     }
     @Override
     public void draw(Graphics2D g) {
@@ -34,8 +30,6 @@ public class GameField extends Rectangle {
                 obj.draw(g);
             }
         }
-
-
     }
 
 
@@ -53,10 +47,7 @@ public class GameField extends Rectangle {
             positions[i][0] = obj.x;
             positions[i][1] = obj.y;
             i++;
-//            positions.put(i, new int []{obj.x, obj.y});
-
         }
-
     }
 
     public void addToMove(Circle obj,int type){

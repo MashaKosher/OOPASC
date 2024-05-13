@@ -12,8 +12,7 @@ public abstract class DisplayObject {
     public int x2Inner, y2Inner;
 
     //точка привязки
-    public int x;
-    public int y;
+    public int x, y;
 
     //цвет оконтовки фигуры
     public int rDraw, gDraw, bDraw;
@@ -43,7 +42,7 @@ public abstract class DisplayObject {
     public long createTime;
     //угол
     double ang;
-    long CONSTT=1000000000;
+    long CONST =1000000000;
 
     public DisplayObject(int x, int y, int r1, int g1, int b1, int r2, int g2, int b2, int lineSize) {
         this.x=x;
@@ -67,20 +66,20 @@ public abstract class DisplayObject {
 
         double cos=(x2-x1)/sqrt(pow((x2-x1),2)+pow((y2-y1),2));
         double sin=(y2-y1)/sqrt(pow((x2-x1),2)+pow((y2-y1),2));
-        this.dX= x1+v*cos*(t-createTime)/CONSTT;
-        this.dY=y1+v*sin*(t-createTime)/CONSTT;
+        this.dX= x1+v*cos*(t-createTime)/ CONST;
+        this.dY=y1+v*sin*(t-createTime)/ CONST;
 
     }
     // нахождение координаты фигуры в момент времени в double c ускорением
     public void moveAcc(double v, double a,  int x1,int y1, int x2, int y2,long t){
         double cos=(x2-x1)/sqrt(pow((x2-x1),2)+pow((y2-y1),2));
         double sin=(y2-y1)/sqrt(pow((x2-x1),2)+pow((y2-y1),2));
-        this.dX= x1+v*cos*(double)(t-createTime)/CONSTT+a*cos*pow((double) (t - createTime) /CONSTT,2)/2;
-        this.dY=y1+v*sin*(double)(t-createTime)/CONSTT+a*sin*pow((double) (t - createTime) /CONSTT,2)/2;
+        this.dX= x1+v*cos*(double)(t-createTime)/ CONST +a*cos*pow((double) (t - createTime) / CONST,2)/2;
+        this.dY=y1+v*sin*(double)(t-createTime)/ CONST +a*sin*pow((double) (t - createTime) / CONST,2)/2;
     }
     public void move(double v,int x1,int y1, double ang,long t){
-        this.dX= x1+v*Math.cos(ang*Math.PI/180)*(t-createTime)/CONSTT;
-        this.dY=y1+v*Math.sin(ang*Math.PI/180)*(t-createTime)/CONSTT;
+        this.dX= x1+v*Math.cos(ang*Math.PI/180)*(t-createTime)/ CONST;
+        this.dY=y1+v*Math.sin(ang*Math.PI/180)*(t-createTime)/ CONST;
 
     }
 
@@ -105,8 +104,8 @@ public abstract class DisplayObject {
 
     public void moveAcc(double v, double a,  int x1,int y1,double ang,long t){
 
-        this.dX= x1+v*Math.cos(ang*Math.PI/180)*(t-createTime)/ CONSTT+a*Math.cos(ang*Math.PI/180)*pow((double) (t - createTime) / CONSTT,2)/2;
-        this.dY=y1+v*Math.sin(ang*Math.PI/180)*(t-createTime)/ CONSTT+a*sin(ang*Math.PI/180)*pow((double) (t - createTime) / CONSTT,2)/2;
+        this.dX= x1+v*Math.cos(ang*Math.PI/180)*(t-createTime)/ CONST +a*Math.cos(ang*Math.PI/180)*pow((double) (t - createTime) / CONST,2)/2;
+        this.dY=y1+v*Math.sin(ang*Math.PI/180)*(t-createTime)/ CONST +a*sin(ang*Math.PI/180)*pow((double) (t - createTime) / CONST,2)/2;
     }
 
 
