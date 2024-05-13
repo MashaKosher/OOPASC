@@ -63,6 +63,7 @@ public class GameField extends Rectangle {
         Random rand=new Random();
         obj.x0=obj.x;
         obj.y0=obj.y;
+        //obj.mas=rand.nextInt(1,20);
 
         obj.ang=rand.nextDouble(0,361);
        // obj.ang=45;
