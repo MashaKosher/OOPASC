@@ -8,7 +8,7 @@ import java.util.*;
 public class Test extends JFrame implements Runnable {
     public int FPS = 60;
     long CONST = 1000000000;
-    final double timePerFrame = CONST/FPS;
+    final double timePerFrame = CONST / FPS;
 
     public GameField gameField;
     private JPanel panel;
@@ -20,14 +20,14 @@ public class Test extends JFrame implements Runnable {
     int width, height;
 
     int type;
-    int num=10;
-
+//    int num = 15;
+    int num = 2;
 
 
     public static void main(String[] args) {
 
-        new Test(1440, 818, "Game", 30, 30, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
-//        new Test(1440, 818, "Game", 800, 500, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
+ //       new Test(1440, 818, "Game", 30, 30, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
+        new Test(1440, 818, "Game", 800, 500, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
 
         // new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,sizeNoInsetsFull().width-50,sizeNoInsetsFull().height-50,0,255,255,175,214,255,20);
         //   new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,800,700,0,255,255,175,214,255,20);
@@ -109,31 +109,29 @@ public class Test extends JFrame implements Runnable {
     public void update(long t) {
 
         gameField.moveAllFigures(type, t);
+        frameCrashFind();
         ArrayList<Circle> copy = new ArrayList<>(gameField.objects);
         boolean wallCrashFlag = false;
         for (Circle obj : copy) {
 
-            if(obj.x1Frame<=minX){
+            if (obj.x1Frame <= minX) {
                 obj.changeVector(t, 1);
                 wallCrashFlag = true;
-            }
-            else if(obj.x2Frame>=maxX) {
+            } else if (obj.x2Frame >= maxX) {
                 obj.changeVector(t, 2);
                 wallCrashFlag = true;
-            }
-            else if(obj.y1Frame<=minY){
+            } else if (obj.y1Frame <= minY) {
                 obj.changeVector(t, 3);
                 wallCrashFlag = true;
 
-            }
-            else if(obj.y2Frame>=maxY){
+            } else if (obj.y2Frame >= maxY) {
                 obj.changeVector(t, 4);
                 wallCrashFlag = true;
 
             }
 
         }
-        if(!wallCrashFlag){
+        if (!wallCrashFlag) {
             crashFind();
             allRotate(t);
         }
@@ -141,25 +139,31 @@ public class Test extends JFrame implements Runnable {
 
 
     public Circle createFigure(int finish) {
-        int rDraw = 0;
-        int gDraw = 0;
-        int bDraw = 0;
-        int rFill = 255;
-        int gFill = 255;
-        int bFill = 255;
+//        int rDraw = 0;
+//        int gDraw = 0;
+//        int bDraw = 0;
+//        int rFill = 255;
+//        int gFill = 255;
+//        int bFill = 255;
+        int rDraw = rand.nextInt(0, 256);
+        int gDraw = rand.nextInt(0, 256);
+        int bDraw = rand.nextInt(0, 256);
+        int rFill = rand.nextInt(0, 256);
+        int gFill = rand.nextInt(0, 256);
+        int bFill = rand.nextInt(0, 256);
         int lineSize = 3;
-        int radius = 35;
+        int radius = rand.nextInt(35, 36);
 
         boolean flag = false;
         int x1 = 0;
         int y1 = 0;
-        while(!flag){
+        while (!flag) {
             flag = true;
             x1 = rand.nextInt(4 + minX, maxX - 2 * radius - 3);
             y1 = rand.nextInt(4 + minY, maxY - 2 * radius - 3);
-            for(int i=0; i<= finish;i++ ){
-                double temp = Math.pow(Math.pow(gameField.positions[i][0]-x1, 2) + Math.pow(gameField.positions[i][1]-y1, 2),0.5);
-                if(temp < 2.5*(radius+lineSize)){
+            for (int i = 0; i <= finish; i++) {
+                double temp = Math.pow(Math.pow(gameField.positions[i][0] - x1, 2) + Math.pow(gameField.positions[i][1] - y1, 2), 0.5);
+                if (temp < (radius + 2 * lineSize + gameField.positions[i][2])) {
                     flag = false;
                     break;
                 }
@@ -171,26 +175,30 @@ public class Test extends JFrame implements Runnable {
     }
 
     public void createList(int type) {
-        gameField.positions=new int[num][num];
-        for(int i=0; i<num; i++){
+        gameField.positions = new int[num][num+1];
+        for (int i = 0; i < num; i++) {
             Circle cir = createFigure(i);
             gameField.addToMove(cir, type);
             gameField.positions[i][0] = cir.x;
             gameField.positions[i][1] = cir.y;
+            gameField.positions[i][2] = cir.radius;
         }
-        gameField.crashState=new boolean[num][num];
+        gameField.crashState = new boolean[num][num];
+        gameField.frameCrashState = new boolean[num][num];
     }
 
     // нахождение столкновения
-    public void crashFind(){
-        boolean flag  = false;
-        for (int i = 0; i < num-1; i++){
-            for ( int j = (i+1); j< num; j++ ){
-                if(gameField.objects.get(i).rr==0) {
+    // need to be parallel
+    public void crashFind() {
+        boolean flag = false;
+        for (int i = 0; i < num - 1; i++) {
+            for (int j = (i + 1); j < num; j++) {
+                if (gameField.objects.get(i).rr == 0) {
                     double temp = Math.pow(gameField.positions[i][0] - gameField.positions[j][0], 2);
                     double temp1 = Math.pow(gameField.positions[i][1] - gameField.positions[j][1], 2);
                     double temp3 = Math.pow(temp + temp1, 0.5);
-                    int radius = (gameField.objects.get(i).radius+1) * 2;
+//                    int radius = (gameField.objects.get(i).radius + gameField.objects.get(j).radius + 1);
+                    int radius = (gameField.objects.get(i).radius + gameField.objects.get(j).radius);
                     if (temp3 <= radius) {
                         if (!gameField.crashState[j][i]) {
                             gameField.crashState[i][j] = true;
@@ -198,61 +206,79 @@ public class Test extends JFrame implements Runnable {
                         }
 
                     }
-                }
-                else gameField.objects.get(i).rr--;
+                } else gameField.objects.get(i).rr--;
             }
-        }
-
-//        System.out.println("--------"+ gameField.objects.size());
-        if(flag){
-            System.out.println("CRash find");
-
         }
     }
 
 
+    // need to be parallel
+    public void frameCrashFind() {
+        boolean flag = false;
+        for (int i = 0; i < num - 1; i++) {
+            for (int j = (i + 1); j < num; j++) {
 
-    // Поворот всех при столкновении
-    public void allRotate(long t){
+                int Xc_dist=Math.abs(gameField.objects.get(i).x-gameField.objects.get(j).x);
+                int Yc_dist=Math.abs(gameField.objects.get(i).y-gameField.objects.get(j).y);
+                double W_average=gameField.objects.get(i).radius+gameField.objects.get(j).radius;
 
-        HashSet<Circle> vectorChangedSet = new HashSet< >();
-        System.out.println("===========================================================");
-
-        for(int i=0;i<num-1;i++){
-            for(int j=0;j<num;j++){
-                if(gameField.crashState[i][j]) {
-                    for(int k=0;k<num-1;k++){
-                            System.out.println(gameField.crashState[i][0]+ "----" + gameField.crashState[i][1]);
+                 if((Xc_dist<=W_average)&&(Yc_dist<=W_average)){
+                    if (!gameField.frameCrashState[j][i]) {
+                        gameField.frameCrashState[i][j] = true;
+                        flag = true;
                     }
-                    Circle c1 =gameField.objects.get(i);
-                    Circle c2 =gameField.objects.get(j);
 
-                    c1.rotation(c2,t);
-                    c2.rotation(c1,t);
-                    vectorChangedSet.add(c1);
-                    vectorChangedSet.add(c2);
-//                    c1.ang=c1.newang;
-//                    c1.v=c1.newv;
-//                    c1.x = c1.bufx;
-//                    c1.y = c1.bufy;
-//                    c2.ang=c2.newang;
-//                    c2.v=c2.newv;
-//                    c2.x = c2.bufx;
-//                    c2.y = c2.bufy;
-                    //c1.ang=c1.newang;
-                    //c2.ang=c2.newang;
-                    //c1.v=c1.newv;
-                   // c2.v=c2.newv;
                 }
             }
         }
-        for(int i=0;i<num-1;i++){
-            for(int j=0;j<num;j++) {
-                gameField.crashState[i][j]=false;
+        if (flag) {
+            System.out.println("Произошло столкновение рамок" );
+
+            for (int i = 0; i < num - 1; i++) {
+
+                System.out.println(gameField.frameCrashState[i][0] + "--" + gameField.frameCrashState[i][1]);
+
+            }
+            System.out.println("-------------------------" );
+
+        }
+
+        for (int i = 0; i < num - 1; i++) {
+            for (int j = 0; j < num; j++) {
+                gameField.frameCrashState[i][j] = false;
             }
         }
 
-        for (Circle cir:  vectorChangedSet) {
+
+    }
+
+
+    // Поворот всех при столкновении
+    // need to be parallel
+    public void allRotate(long t) {
+
+        HashSet<Circle> vectorChangedSet = new HashSet<>();
+
+        for (int i = 0; i < num - 1; i++) {
+            for (int j = 0; j < num; j++) {
+                if (gameField.crashState[i][j]) {
+
+                    Circle c1 = gameField.objects.get(i);
+                    Circle c2 = gameField.objects.get(j);
+                    c1.rotation(c2, t);
+                    c2.rotation(c1, t);
+                    vectorChangedSet.add(c1);
+                    vectorChangedSet.add(c2);
+                }
+            }
+        }
+        for (int i = 0; i < num - 1; i++) {
+            for (int j = 0; j < num; j++) {
+                gameField.crashState[i][j] = false;
+            }
+        }
+
+        for (Circle cir : vectorChangedSet) {
             cir.ang = cir.newAng;
             cir.v = cir.newV;
             //new
@@ -260,11 +286,10 @@ public class Test extends JFrame implements Runnable {
 
 
         }
-        System.out.println("===========================================================");
+
 
 
     }
-
 
 
     public Dimension size(int w, int h) {
@@ -275,7 +300,6 @@ public class Test extends JFrame implements Runnable {
         this.pack();
         int realW = this.getContentPane().getWidth();
         int realH = this.getContentPane().getHeight();
-        System.out.println(realW + " " + realH);
         dim.width = 2 * dim.width - realW;
         dim.height = 2 * dim.height - realH;
         this.setPreferredSize(dim);

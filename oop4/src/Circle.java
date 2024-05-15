@@ -27,8 +27,8 @@ public class Circle extends DisplayObject {
         y1Inner=y1Frame+lineSize;
         x2Inner=x2Frame-lineSize;
         y2Inner=y2Frame-lineSize;
-//        this.mass = rand.nextInt(1, 101);
-        this.mass = 5;
+        this.mass = radius*radius;
+//        this.mass = 5;
         this.rr=0;
     }
 
@@ -47,8 +47,8 @@ public class Circle extends DisplayObject {
             double dy = obj.y - this.y;
 
             double phiRad = Math.atan2(dy, dx);
-            System.out.printf("Старые для 1 объекта x: %d, y: %d и угол %f и скорость %f\n", this.x, this.y, this.ang, this.v);
-            System.out.printf("Старые для 2 объекта x: %d, y: %d и угол %f и скорость %f\n", obj.x, obj.y, obj.ang, obj.v);
+          //  System.out.printf("Старые для 1 объекта x: %d, y: %d и угол %f и скорость %f\n", this.x, this.y, this.ang, this.v);
+           // System.out.printf("Старые для 2 объекта x: %d, y: %d и угол %f и скорость %f\n", obj.x, obj.y, obj.ang, obj.v);
             double theta1Rad = this.ang * Math.PI / 180;
             double theta2Rad = obj.ang * Math.PI / 180;
 
@@ -72,15 +72,7 @@ public class Circle extends DisplayObject {
             if (this.ang < 0) {
                 this.ang += 360;
             }
-//            this.x0 = this.x;
-//            this.y0 = this.y;
-//            this.createTime = t;
 
-            System.out.printf("Новые для 1 объекта x: %d, y: %d и угол %f  и скорость %f\n", this.x, this.y, this.newAng, this.newV);
-            System.out.println("--------------------------------------------");
-
-            //
-            // new
             this.bufX = x;
             this.bufY = y;
             if(dx>0 && dy < 0){
@@ -99,27 +91,13 @@ public class Circle extends DisplayObject {
             this.x0 = this.bufX;
             this.y0 = this.bufY;
             this.createTime = t;
-//            int deltaX= bufX -x;
-//            int deltaY= bufY -y;
-//            this.x0 = this.bufx;
-//            this.y0 = this.bufy;
-//            this.x1+=deltaX;
-//            this.y1+=deltaY;
-//            x1Frame+=deltaX;
-//            y1Frame+=deltaY;
-//            x2Frame+=deltaX;
-//            y2Frame+=deltaY;
-//            x1Inner+=deltaX;
-//            y1Inner+=deltaY;
-//            x2Inner+=deltaX;
-//            y2Inner+=deltaY;
-
-
             this.r = true;
             this.rr = 0;
 
         }
     }
+
+
 
     public void changeVector(long t, int type){
         if(type==1) {

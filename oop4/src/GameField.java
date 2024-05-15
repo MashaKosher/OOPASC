@@ -10,6 +10,7 @@ public class GameField extends Rectangle {
     public ArrayList<Circle> objects;
     int[][] positions;
     boolean[][]crashState;
+    boolean[][]frameCrashState;
     public GameField(int x1, int y1, int x2, int y2, int r1, int g1, int b1, int r2, int g2, int b2, int frameSize){
         super(x1,y1,x2-x1,y2-y1,r1,g1,b1,r2,g2,b2,frameSize);
         this.x1=x1;
@@ -64,7 +65,7 @@ public class GameField extends Rectangle {
         }
         obj.createTime=System.nanoTime();
         objects.add(obj);
-        System.out.println(obj.ang);
+
 
     }
 
