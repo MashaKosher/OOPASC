@@ -4,6 +4,9 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Test extends JFrame implements Runnable {
     public int FPS = 60;
@@ -20,14 +23,14 @@ public class Test extends JFrame implements Runnable {
     int width, height;
 
     int type;
-//    int num = 15;
-    int num = 2;
+    int num = 15;
+//    int num = 2;
 
 
     public static void main(String[] args) {
 
- //       new Test(1440, 818, "Game", 30, 30, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
-        new Test(1440, 818, "Game", 800, 500, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
+        new Test(1440, 818, "Game", 30, 30, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
+       // new Test(1440, 818, "Game", 800, 500, 1432, 789, 10, 120, 160, 4, 55, 14, 225, 180, 180, 215, 20, 2);
 
         // new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,sizeNoInsetsFull().width-50,sizeNoInsetsFull().height-50,0,255,255,175,214,255,20);
         //   new Game(sizeNoInsetsFull().width, sizeNoInsetsFull().height,"Game",50,50,800,700,0,255,255,175,214,255,20);
@@ -98,7 +101,11 @@ public class Test extends JFrame implements Runnable {
             now = System.nanoTime();
 
             if (now - lastFrame >= timePerFrame) {
-                update(now);
+                try {
+                    update(now);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 panel.repaint();
                 lastFrame = now;
@@ -106,7 +113,7 @@ public class Test extends JFrame implements Runnable {
         }
     }
 
-    public void update(long t) {
+    public void update(long t) throws InterruptedException {
 
         gameField.moveAllFigures(type, t);
         frameCrashFind();
@@ -189,47 +196,81 @@ public class Test extends JFrame implements Runnable {
 
     // нахождение столкновения
     // need to be parallel
-    public void crashFind() {
-        boolean flag = false;
-        for (int i = 0; i < num - 1; i++) {
-            for (int j = (i + 1); j < num; j++) {
-                if (gameField.objects.get(i).rr == 0) {
-                    double temp = Math.pow(gameField.positions[i][0] - gameField.positions[j][0], 2);
-                    double temp1 = Math.pow(gameField.positions[i][1] - gameField.positions[j][1], 2);
-                    double temp3 = Math.pow(temp + temp1, 0.5);
-//                    int radius = (gameField.objects.get(i).radius + gameField.objects.get(j).radius + 1);
-                    int radius = (gameField.objects.get(i).radius + gameField.objects.get(j).radius);
-                    if (temp3 <= radius) {
-                        if (!gameField.crashState[j][i]) {
-                            gameField.crashState[i][j] = true;
-                            flag = true;
-                        }
 
+    public void subCrash(int start){
+        for (int j = (start + 1); j < num; j++) {
+            if (gameField.objects.get(start).rr == 0) {
+                double temp = Math.pow(gameField.positions[start][0] - gameField.positions[j][0], 2);
+                double temp1 = Math.pow(gameField.positions[start][1] - gameField.positions[j][1], 2);
+                double temp3 = Math.pow(temp + temp1, 0.5);
+//                    int radius = (gameField.objects.get(i).radius + gameField.objects.get(j).radius + 1);
+                int radius = (gameField.objects.get(start).radius + gameField.objects.get(j).radius);
+                if (temp3 <= radius) {
+                    if (!gameField.crashState[j][start]) {
+                        gameField.crashState[start][j] = true;
                     }
-                } else gameField.objects.get(i).rr--;
+
+                }
+            } else gameField.objects.get(start).rr--;
+        }
+    }
+
+    public void crashFind() throws InterruptedException {
+
+        ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        CountDownLatch latch = new CountDownLatch(num-1);
+        for (int i = 0; i < num - 1; i++) {
+            final int start = i;
+            subCrash(i);
+            service.submit(new Runnable() {
+
+                @Override
+                public void run() {
+                    subCrash(start);
+                    latch.countDown();
+                }
+            });
+
+        }
+        latch.await();
+        service.shutdown();
+    }
+
+
+    // need to be parallel
+    public void subFrameCrash(int start){
+        for (int j = (start + 1); j < num; j++) {
+
+            int Xc_dist=Math.abs(gameField.objects.get(start).x-gameField.objects.get(j).x);
+            int Yc_dist=Math.abs(gameField.objects.get(start).y-gameField.objects.get(j).y);
+            double W_average=gameField.objects.get(start).radius+gameField.objects.get(j).radius;
+
+            if((Xc_dist<=W_average)&&(Yc_dist<=W_average)){
+                if (!gameField.frameCrashState[j][start]) {
+                    gameField.frameCrashState[start][j] = true;
+//                    flag = true;
+                }
+
             }
         }
     }
 
 
-    // need to be parallel
     public void frameCrashFind() {
         boolean flag = false;
+        ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        CountDownLatch latch = new CountDownLatch(num-1);
         for (int i = 0; i < num - 1; i++) {
-            for (int j = (i + 1); j < num; j++) {
+            final int start = i;
+//            subFrameCrash(i);
+            service.submit(new Runnable() {
 
-                int Xc_dist=Math.abs(gameField.objects.get(i).x-gameField.objects.get(j).x);
-                int Yc_dist=Math.abs(gameField.objects.get(i).y-gameField.objects.get(j).y);
-                double W_average=gameField.objects.get(i).radius+gameField.objects.get(j).radius;
-
-                 if((Xc_dist<=W_average)&&(Yc_dist<=W_average)){
-                    if (!gameField.frameCrashState[j][i]) {
-                        gameField.frameCrashState[i][j] = true;
-                        flag = true;
-                    }
-
+                @Override
+                public void run() {
+                    subFrameCrash(start);
+                    latch.countDown();
                 }
-            }
+            });
         }
         if (flag) {
             System.out.println("Произошло столкновение рамок" );
@@ -255,11 +296,17 @@ public class Test extends JFrame implements Runnable {
 
     // Поворот всех при столкновении
     // need to be parallel
+    // Возможно нужен потокобезопасный hashSet
+    public void subRotate(int i){
+
+    }
+
     public void allRotate(long t) {
 
         HashSet<Circle> vectorChangedSet = new HashSet<>();
 
         for (int i = 0; i < num - 1; i++) {
+            //
             for (int j = 0; j < num; j++) {
                 if (gameField.crashState[i][j]) {
 
@@ -271,6 +318,7 @@ public class Test extends JFrame implements Runnable {
                     vectorChangedSet.add(c2);
                 }
             }
+            //
         }
         for (int i = 0; i < num - 1; i++) {
             for (int j = 0; j < num; j++) {
