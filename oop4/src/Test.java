@@ -4,9 +4,7 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.*;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class Test extends JFrame implements Runnable {
     public int FPS = 60;
@@ -24,6 +22,9 @@ public class Test extends JFrame implements Runnable {
 
     int type;
     int num = 15;
+    ConcurrentHashMap<Circle, Integer> map;
+    HashSet<Circle> set;
+    CopyOnWriteArrayList<Circle> list1;
 //    int num = 2;
 
 
@@ -256,7 +257,7 @@ public class Test extends JFrame implements Runnable {
     }
 
 
-    public void frameCrashFind() {
+    public void frameCrashFind() throws InterruptedException {
         boolean flag = false;
         ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         CountDownLatch latch = new CountDownLatch(num-1);
@@ -272,6 +273,8 @@ public class Test extends JFrame implements Runnable {
                 }
             });
         }
+        latch.await();
+        service.shutdown();
         if (flag) {
             System.out.println("Произошло столкновение рамок" );
 
@@ -297,13 +300,12 @@ public class Test extends JFrame implements Runnable {
     // Поворот всех при столкновении
     // need to be parallel
     // Возможно нужен потокобезопасный hashSet
-    public void subRotate(int i){
 
-    }
 
     public void allRotate(long t) {
 
         HashSet<Circle> vectorChangedSet = new HashSet<>();
+        map = new ConcurrentHashMap<>();
 
         for (int i = 0; i < num - 1; i++) {
             //
@@ -331,13 +333,72 @@ public class Test extends JFrame implements Runnable {
             cir.v = cir.newV;
             //new
             cir.upd(cir.bufX, cir.bufY);
-
-
         }
-
-
-
     }
+
+
+//    public void subRotate(int i, int end, long t ){
+//        for (int j = 0; j < num; j++) {
+//            if (gameField.crashState[i][j]) {
+//
+//                Circle c1 = gameField.objects.get(i);
+//                Circle c2 = gameField.objects.get(j);
+//                c1.rotation(c2, t);
+//                c2.rotation(c1, t);
+//
+////                set.add(c1);
+////                set.add(c2);
+//                list1.add(c1);
+//                list1.add(c2);
+//            }
+//        }
+//    }
+//
+//    public void allRotate(long t) throws InterruptedException {
+//
+////        map = new ConcurrentHashMap<>();
+////        set = new HashSet<>();
+//        list1 = new CopyOnWriteArrayList<>();
+//        ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//        CountDownLatch latch = new CountDownLatch(num-1);
+//
+//        for (int i = 0; i < num - 1; i++) {
+//            final int start = i;
+//
+//            service.submit(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    subRotate(start, t);
+//                    latch.countDown();
+//                }
+//            });
+//        }
+//        for (int i = 0; i < num - 1; i++) {
+//            for (int j = 0; j < num; j++) {
+//                gameField.crashState[i][j] = false;
+//            }
+//        }
+//        latch.await();
+//        service.shutdown();
+//
+//
+//
+//        for (Circle cir : list1) {
+//            cir.ang = cir.newAng;
+//            cir.v = cir.newV;
+//            //new
+//            cir.upd(cir.bufX, cir.bufY);
+//        }
+
+//        for(Map.Entry<Circle, Integer> entry: map.entrySet()){
+//            Circle key = entry.getKey();
+//            key.ang = key.newAng;
+//            key.v = key.newV;
+//            key.upd(key.bufX, key.bufY);
+//
+//        }
+//    }
 
 
     public Dimension size(int w, int h) {
