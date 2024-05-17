@@ -160,7 +160,7 @@ public class Test extends JFrame implements Runnable {
         int gFill = rand.nextInt(0, 256);
         int bFill = rand.nextInt(0, 256);
         int lineSize = 3;
-        int radius = rand.nextInt(35, 36);
+        int radius = rand.nextInt(35, 43);
 
         boolean flag = false;
         int x1 = 0;
@@ -306,6 +306,7 @@ public class Test extends JFrame implements Runnable {
 
         HashSet<Circle> vectorChangedSet = new HashSet<>();
         map = new ConcurrentHashMap<>();
+        long start = System.nanoTime();
 
         for (int i = 0; i < num - 1; i++) {
             //
@@ -334,10 +335,12 @@ public class Test extends JFrame implements Runnable {
             //new
             cir.upd(cir.bufX, cir.bufY);
         }
+        System.out.println("Время::::" + (System.nanoTime()-start));
     }
 
 
-//    public void subRotate(int i, int end, long t ){
+//    public void subRotate(int i, long t ){
+//
 //        for (int j = 0; j < num; j++) {
 //            if (gameField.crashState[i][j]) {
 //
@@ -355,6 +358,8 @@ public class Test extends JFrame implements Runnable {
 //    }
 //
 //    public void allRotate(long t) throws InterruptedException {
+//        long start = System.nanoTime();
+//
 //
 ////        map = new ConcurrentHashMap<>();
 ////        set = new HashSet<>();
@@ -363,13 +368,13 @@ public class Test extends JFrame implements Runnable {
 //        CountDownLatch latch = new CountDownLatch(num-1);
 //
 //        for (int i = 0; i < num - 1; i++) {
-//            final int start = i;
+//            final int start1 = i;
 //
 //            service.submit(new Runnable() {
 //
 //                @Override
 //                public void run() {
-//                    subRotate(start, t);
+//                    subRotate(start1, t);
 //                    latch.countDown();
 //                }
 //            });
@@ -390,14 +395,16 @@ public class Test extends JFrame implements Runnable {
 //            //new
 //            cir.upd(cir.bufX, cir.bufY);
 //        }
-
-//        for(Map.Entry<Circle, Integer> entry: map.entrySet()){
-//            Circle key = entry.getKey();
-//            key.ang = key.newAng;
-//            key.v = key.newV;
-//            key.upd(key.bufX, key.bufY);
 //
-//        }
+////        for(Map.Entry<Circle, Integer> entry: map.entrySet()){
+////            Circle key = entry.getKey();
+////            key.ang = key.newAng;
+////            key.v = key.newV;
+////            key.upd(key.bufX, key.bufY);
+////
+////        }
+//        System.out.println("Время::::" + (System.nanoTime()-start));
+//
 //    }
 
 
